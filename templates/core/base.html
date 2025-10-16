@@ -1,0 +1,154 @@
+{% load static %}
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}The.I{% endblock %}</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- 自作CSS -->
+    <link rel="stylesheet" href="{% static 'css/site.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header class="global-header" id="global-header" role="banner" aria-label="サイトヘッダー">
+        <div class="gh-inner">
+            <a href="/" class="gh-logo-link" aria-label="The.I トップへ">
+                <img src="{% static 'img/thei_logo.png' %}" alt="The.I" class="gh-logo" id="gh-logo">
+            </a>
+            <button class="gh-burger" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="global-nav" id="gh-burger">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ▼ ハンバーガーで開くフルスクリーンメニュー -->
+    <nav class="mnav" id="global-nav" aria-hidden="true">
+        <div class="mnav-inner" role="dialog" aria-modal="true" aria-label="サイトメニュー">
+            <a href="/" class="mnav-logo" aria-label="The.I トップへ">
+                <img src="{% static 'img/Jiai_logoFooter.png' %}" alt="The.I">
+            </a>
+        
+            <button class="mnav-close" type="button" aria-label="メニューを閉じる">
+                <span></span><span></span>
+            </button>
+        
+            <ul class="mnav-list">
+                <li><a href="/">トップページ</a></li>
+                <li><a href="/#concept">コンセプト</a></li>
+                <li><a href="/#images">イメージ</a></li>
+                <li><a href="/news/">ニュース</a></li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        (function () {
+            const header = document.getElementById('global-header');
+            const logoEl = document.getElementById('gh-logo');
+    
+            if (!header || !logoEl) return;
+    
+            // ロゴ画像（Django static）
+            const DARK_LOGO  = "{% static 'img/thei_logo.png' %}";
+            const LIGHT_LOGO = "{% static 'img/Jiai_logoFooter.png' %}";
+    
+            // 事前プリロード（チラつき防止）
+            [DARK_LOGO, LIGHT_LOGO].forEach(src => { const i = new Image(); i.src = src; });
+    
+            function sectionThemeUnderHeader() {
+                // ヘッダーの中央あたりの座標（x,y）にある要素の「下」を判定
+                const x = window.innerWidth / 2;
+                const y = Math.min(header.offsetHeight / 2, 60);
+                const stack = document.elementsFromPoint(x, y);
+                for (const el of stack) {
+                    // ヘッダー自身はスキップ
+                    if (header.contains(el)) continue;
+                    let node = el;
+                    while (node && node !== document.body) {
+                        if (node.hasAttribute && node.hasAttribute('data-header-theme')) {
+                            return node.getAttribute('data-header-theme'); // 'dark' or 'light'
+                        }
+                        node = node.parentElement;
+                    }
+                }
+                return null;
+            }
+    
+            function applyTheme(theme) {
+                if (theme === 'dark') {
+                    header.classList.add('theme-dark');
+                    header.classList.remove('theme-light');
+                    if (logoEl.getAttribute('src') !== DARK_LOGO) logoEl.setAttribute('src', DARK_LOGO);
+                } else if (theme === 'light') {
+                    header.classList.add('theme-light');
+                    header.classList.remove('theme-dark');
+                    if (logoEl.getAttribute('src') !== LIGHT_LOGO) logoEl.setAttribute('src', LIGHT_LOGO);
+                }
+            }
+    
+            function onScroll() {
+                // 1pxでもスクロールしたらヘッダーロゴを出す
+                const on = window.scrollY > 0;
+                header.classList.toggle('is-on', on);
+    
+                // 下地のテーマ切替
+                const theme = sectionThemeUnderHeader();
+                if (theme) applyTheme(theme);
+            }
+    
+            onScroll();
+            window.addEventListener('scroll', onScroll, { passive: true });
+            window.addEventListener('resize', onScroll);
+        })();
+
+        (function () {
+            const burger = document.getElementById('gh-burger');
+            const mnav   = document.getElementById('global-nav');
+            const mclose = mnav ? mnav.querySelector('.mnav-close') : null;
+            const links  = mnav ? Array.from(mnav.querySelectorAll('a')) : [];
+
+            function openNav(){
+                if (!mnav) return;
+                mnav.classList.add('is-open');
+                document.body.classList.add('nav-open');
+                burger && burger.setAttribute('aria-expanded','true');
+                mnav.setAttribute('aria-hidden','false');
+                (links[0] || mclose || mnav).focus?.({preventScroll:true});
+                window.addEventListener('keydown', onKeydown);
+                mnav.addEventListener('click', onBackdrop);
+            }
+            function closeNav(){
+                if (!mnav) return;
+                mnav.classList.remove('is-open');
+                document.body.classList.remove('nav-open');
+                burger && burger.setAttribute('aria-expanded','false');
+                mnav.setAttribute('aria-hidden','true');
+                window.removeEventListener('keydown', onKeydown);
+                mnav.removeEventListener('click', onBackdrop);
+                burger?.focus?.({preventScroll:true});
+            }
+            function onKeydown(e){ if (e.key === 'Escape') closeNav(); }
+            function onBackdrop(e){ if (e.target === mnav) closeNav(); }
+
+            burger && burger.addEventListener('click', (e)=>{ e.preventDefault(); openNav(); });
+            mclose && mclose.addEventListener('click', (e)=>{ e.preventDefault(); closeNav(); });
+            links.forEach(a => a.addEventListener('click', closeNav));
+        })();
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+

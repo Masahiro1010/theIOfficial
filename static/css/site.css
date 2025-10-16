@@ -1,0 +1,779 @@
+:root{
+    --mnav-bg: rgba(230,240,242,.96); /* メニューの淡い背景色（スクショに近い） */
+    --brand-green: #1f5b34;           /* ロゴや×印の緑 */
+
+    /* iOSノッチ対策（未定義なら0として扱われる） */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+}
+
+/* ============ Global Header ============ */
+.global-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: clamp(56px, 10svh, 80px);
+    z-index: 1000;
+    background: transparent;
+    pointer-events: none;
+}
+.global-header .gh-inner {
+    pointer-events: auto;
+    width: min(1120px, 92vw);
+    height: 100%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* ロゴ中央 */
+    position: relative;
+}
+.gh-logo {
+    height: clamp(24px, 4.2vw, 40px);
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity .35s ease, transform .35s ease;
+    will-change: opacity, transform;
+    pointer-events: none;
+}
+/* スクロール後にロゴ表示 */
+.global-header.is-on .gh-logo {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ハンバーガー（常時右上） */
+.gh-burger {
+    position: fixed;
+    top: clamp(10px, 2.4vh, 20px);
+    right: clamp(10px, 2.4vh, 20px);
+    width: 5vw;              /* ← 大きさ調整はここ */
+    height: 5vh;             /* ← 大きさ調整はここ */
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    z-index: 1001;
+}
+.gh-burger span {
+    width: 3vw;              /* ← 棒の長さ */
+    height: 0.3vh;              /* ← 棒の太さ */
+    background: #fafafa;      /* 初期（dark想定） */
+    border-radius: 2px;
+}
+
+/* テーマに応じた色切替 */
+.global-header.theme-dark .gh-burger span { background: #fafafa; }
+.global-header.theme-light .gh-burger span { background: #111111; }
+
+/* iOSアドレスバー対策：ヒーローは100svh推奨（参考） */
+.hero,
+.hero.pin {
+    min-height: 100svh;
+}
+
+
+/* Hero Section */
+.hero {
+    position: relative;
+    width: 100%;
+    height: 100vh; /* ファーストビューを全画面に */
+    background: url("../img/toppage_back.jpg") center/cover no-repeat;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+/* ロゴ＋テキスト */
+.hero-text {
+    color: white;
+    text-align: left;
+    margin-left: 5vh;
+}
+.hero-logo {
+    width: 20vw; /* Figmaに合わせてサイズ調整 */
+    display: block;
+}
+.hero-sub {
+    margin-top: 1vh;
+    font-size: 2.2rem;
+    font-family: "Shippori Mincho", "Noto Serif JP", serif;
+    letter-spacing: 0.05em;
+}
+
+
+
+/* 左からフェードイン（初期は左にズラして透明） */
+.hero-logo {
+    opacity: 0;
+    transform: translateX(-40px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+    will-change: opacity, transform;
+}
+
+/* 表示トリガークラス */
+.hero-logo.is-in {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* 動きが苦手な環境設定の配慮（任意） */
+@media (prefers-reduced-motion: reduce) {
+    .hero-logo {
+        transition: none;
+        transform: none;
+        opacity: 1;
+    }
+}
+
+/* ステージ：2画面ぶんのスクロール領域を用意 */
+.stage {
+    position: relative;
+    height: 200vh; /* 1画面目: ヒーロー固定 / 2画面目: コンセプトせり上げ */
+}
+
+/* ヒーローを画面先頭にピン留め */
+.hero.pin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    z-index: 1;
+}
+
+/* コンセプト：最初は画面下に隠して固定配置、JSでtranslateYを更新 */
+.concept-panel {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100vh;
+    background: #fff;
+    z-index: 2;
+    transform: translateY(100%); /* 下から開始（JSで上げる） */
+    opacity: 0.6;               /* スクロールで 1.0 へ */
+    will-change: transform, opacity;
+    box-shadow: 0 -10px 40px rgba(0,0,0,.08);
+}
+
+/* 進行が100%に達したら、通常スクロールに自然合流（固定→sticky） */
+.concept-panel.is-sticky {
+    position: sticky;
+    top: 0;
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* コンテンツの体裁（自由に調整してOK） */
+.concept-inner { max-width: 1120px; }
+.concept-eyebrow {
+    font-family: "Shippori Mincho","Noto Serif JP",serif;
+    font-size: clamp(2.0vw, 2.2vw, 3.0vw);
+    display: inline-block;
+    margin-top: 6vh;
+    position: relative;
+}
+.concept-eyebrow::after {
+    content: "";
+    display: block;
+    width: 20vw;      /* ★ 線の長さをここで調整 */
+    height: 2px;
+    background: #a3a3a3;
+    margin: 8px auto 0; /* 中央揃え */
+}
+.concept-empty{
+    margin-top: 2vh;
+    margin-bottom: 2vh;
+}
+
+/* ============ 中央到達でフェードイン（共通） ============ */
+.reveal-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity .8s ease, transform .8s ease;
+    will-change: opacity, transform;
+}
+.reveal-up.is-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 動きが苦手な環境 */
+@media (prefers-reduced-motion: reduce) {
+    .reveal-up { opacity: 1; transform: none; transition: none; }
+}
+
+
+.concept-title {
+    font-family: "Shippori Mincho","Noto Serif JP",serif;
+    font-weight: 700;
+    line-height: 1.25;
+    font-size: clamp(28px, 4.4vw, 52px);
+    margin-top: 10vh;
+    margin-bottom: 10vh;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 1s ease, transform 1s ease;
+}
+/* 表示されたときの状態 */
+.concept-title.is-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.concept-body {
+    font-size: clamp(14px, 1.6vw, 18px);
+    color: #333;
+    margin-bottom: 3vw;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity .8s ease, transform .8s ease;
+    will-change: opacity, transform;
+}
+.concept-body.is-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+/* 動きが苦手な環境に配慮 */
+@media (prefers-reduced-motion: reduce) {
+    .concept-body { opacity: 1; transform: none; transition: none; }
+}
+
+.concept-btn {
+    padding: 14px 28px;
+    border-radius: 14px;
+}
+.concept-visual img { display: block; width: 90%; height: auto; margin-top: 10vh;}
+
+/* 次セクションとの余白 */
+.after-content { min-height: 120vh; background: #fafafa; }
+
+/* ===========================
+Concept直下：黒背景＋横3枚
+=========================== */
+.concept-below--dark {
+    background: #000;
+    color: #fff;
+    padding: 15vh 0 8vh;
+}
+
+/* 画像カード */
+.concept-thumb {
+    margin: 0;
+}
+
+/* 画像だけを切り抜く箱（ここに aspect-ratio と overflow） */
+.concept-thumb .thumb-media {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.concept-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;     /* 中央トリミングで揃える */
+    transform: scale(1.001); /* アンチエイリアス対策の微調整 */
+    transition: transform .6s ease;
+}
+
+/* ホバー時の微ズーム */
+.concept-thumb .thumb-media:hover img {
+    transform: scale(1.05);
+}
+
+/* コンテナ幅をConcept本文に合わせたいとき（任意） */
+.concept-below .container { max-width: 1120px; }
+
+/* モバイルで1列→タブレットで2列→PCで3列はBootstrapのcolで既に実現 */
+
+/* More リンク */
+.more-link {
+    margin-top: 6vh;          /* 写真との間隔 */
+    text-align: center;
+}
+
+.more-link span {
+    display: inline-block;
+    color: #FAFAFA;
+    font-size: 1.2rem;
+    font-family: "Shippori Mincho","Noto Serif JP",serif;
+    letter-spacing: 0.05em;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #FAFAFA; /* 下線 */
+}
+
+/* ===========================
+Concept-below：キャプション
+=========================== */
+/* キャプション */
+.concept-cap {
+    margin-top: 10px;
+    color: #FAFAFA;
+    text-align: center;
+    font-family: "Shippori Mincho","Noto Serif JP",serif;
+    font-size: clamp(12px, 1.6vw, 16px);
+    letter-spacing: 0.03em;
+}
+
+/* フェードイン（画面下33%でトリガー） */
+.cap-reveal {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity .6s ease, transform .6s ease;
+    will-change: opacity, transform;
+}
+.cap-reveal.is-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cap-reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ===== Slider layout ===== */
+.cb-slider { position: relative; }
+.cb-viewport { overflow: hidden; margin: 0 -8px; } /* 内側余白相殺 */
+.cb-track {
+    display: flex;
+    transition: transform .4s ease;
+    will-change: transform;
+}
+.cb-slide {
+    flex: 0 0 calc(100% / var(--spv, 3)); /* 3枚表示をデフォルトに */
+    padding: 0 8px;                        /* ギャップ */
+    box-sizing: border-box;
+}
+
+/* ブレークポイント（PC=3 / Tablet=2 / Phone=1） */
+@media (max-width: 991.98px) { .cb-slide { flex-basis: calc(100% / 2); } :root { --spv: 2; } }
+@media (max-width: 575.98px) { .cb-slide { flex-basis: 100%; }           :root { --spv: 1; } }
+
+/* ===== Nav buttons ===== */
+.cb-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.6);
+    background: rgba(0,0,0,.35);
+    color: #fff;
+    display: grid; place-items: center;
+    cursor: pointer;
+    z-index: 5;
+}
+.cb-prev { left: -6px; }
+.cb-next { right: -6px; }
+.cb-nav:hover { background: rgba(0,0,0,.55); border-color: rgba(255,255,255,.9); }
+.cb-nav:disabled { opacity: .35; cursor: default; }
+
+/* ダーク背景上のボタンは見やすい白。ライト背景に載る可能性があれば切替も可 */
+
+
+/* =======================
+News セクション
+======================= */
+.news-section {
+    background: #f2f2f2;
+    padding: 8vh 0;
+}
+
+.news-title {
+    font-family: "Shippori Mincho","Noto Serif JP",serif;
+    font-size: 1.8rem;
+    margin-bottom: 2vh;
+    border-bottom: 1px solid #555;
+    display: inline-block;
+    padding-bottom: 4px;
+}
+
+.news-list {
+    list-style: none;
+    padding: 0;
+    margin: 4vh 0 0;
+}
+
+.news-list li {
+    border-bottom: 1px solid #777;
+    padding: 1.5vh 0;
+}
+
+.news-list a {
+    color: #333;
+    text-decoration: none;
+    display: block;
+}
+
+/* ===== News list layout ===== */
+.news-list { margin: 4vh 0 0; padding: 0; list-style: none; }
+.news-item { border-bottom: 1px solid #777; }
+.news-item a {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    padding: 14px 0;
+    color: #333;
+    text-decoration: none;
+}
+.news-item a:hover .news-text { text-decoration: underline; }
+.news-date { font-variant-numeric: tabular-nums; color: #555; width: 8.5em; }
+
+/* ===== フェードイン（画面下20%ライン付近で発火） ===== */
+.news-reveal { 
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity .6s ease, transform .6s ease;
+    will-change: opacity, transform;
+}
+.news-reveal.is-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 段階的ディレイ（好みで調整） */
+.news-item:nth-child(1) { transition-delay: 0ms; }
+.news-item:nth-child(2) { transition-delay: 60ms; }
+.news-item:nth-child(3) { transition-delay: 120ms; }
+.news-item:nth-child(4) { transition-delay: 180ms; }
+.news-item:nth-child(5) { transition-delay: 240ms; }
+
+@media (prefers-reduced-motion: reduce) {
+    .news-reveal { opacity: 1; transform: none; transition: none; }
+}
+
+
+/* =======================
+フッター
+======================= */
+.site-footer {
+    background: #fff;
+    padding: 8vh 0;
+    border-top: 1px solid #ddd;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.footer-inner {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 40px;
+}
+
+.footer-logo {
+    flex: 1 1 250px;
+    text-align: left;   /* ← 右寄せ */
+    margin-top: 2vw;
+    margin-left: 3vw;
+}
+
+.footer-logo-img {
+    width: 15vw;        /* ← ロゴを大きめに表示 */
+    height: auto;
+    display: inline-block;
+}
+
+.footer-logo .slogan {
+    margin-top: 8px;
+    font-size: 2vw;;
+    font-family: "Shippori Mincho", "Noto Serif JP", serif;
+    color: #111111;
+    text-align: left;
+}
+
+.footer-contact {
+    margin-top: 1vw;
+    margin-right: 7vw;      /* nav と同じ基準で配置 */
+    font-size: 1rem;       /* ベース文字サイズ */
+    line-height: 1.6;      /* 行間広めで読みやすく */
+    color: #111111;        /* 背景が黒なら白文字 */
+}
+
+.footer-contact h3 {
+    font-size: 1.2rem;     /* 見出しは少し大きめ */
+    font-weight: 600;
+    margin-bottom: 2.6rem;  /* 本文との間隔 */
+}
+
+.footer-contact p {
+    margin: 0;
+    line-height: 2.3;              /* 余分な余白を消す */
+}
+
+.footer-nav {
+    flex: 1 1 150px;
+    margin-top: 1vw;
+}
+
+.footer-nav ul {
+    display: flex;
+    flex-direction: column;   /* 縦並びにする */
+    align-items: flex-end;    /* 右端に寄せる */
+    gap: 1rem;                /* 各項目の間隔 */
+    margin-right: 7vw;
+    padding: 0;
+    list-style: none;         /* 黒丸を消す */
+}
+
+.footer-nav li {
+    margin-bottom: 1vh;
+}
+
+.footer-nav a {
+    font-size: 1.2rem;        /* 少し大きめ */
+    font-weight: 500;         /* 見やすく */
+    color: #111111;           /* 背景が黒なら白文字 */
+    text-decoration: none;    /* 下線消す */
+}
+
+.footer-nav a:hover {
+    text-decoration: underline; /* ホバーで下線出す */
+}
+
+
+/* 動きが苦手な環境設定に配慮（任意） */
+@media (prefers-reduced-motion: reduce) {
+    .concept-panel { transform: none !important; opacity: 1 !important; position: relative; height: auto; }
+    .stage { height: auto; }
+    .hero.pin { position: relative; height: auto; }
+}
+
+
+:root {
+    --mnav-bg: rgba(230,240,242,.96);  /* スクショ風の淡いグレー青 */
+    --brand-green: #1f5b34;            /* ロゴ/×の色合い */
+}
+
+/* オーバーレイ（モーダル全体）の入退場アニメ：上から落ちてくる */
+.mnav{
+    position: fixed; inset: 0;
+    z-index: 2000;
+    background: var(--mnav-bg, rgba(230,240,242,.96));
+    backdrop-filter: blur(2px);
+    transform: translateY(-4%);                /* ← 少し上からスタート */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+        opacity .28s ease,
+        transform .36s cubic-bezier(.22,1,.36,1),
+        visibility .28s step-end;
+}
+.mnav.is-open{
+    transform: translateY(0);                  /* ← 落ちて着地 */
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+        opacity .28s ease,       
+        transform .36s cubic-bezier(.22,1,.36,1);
+}
+
+.mnav-inner{
+    position: relative;
+    width: min(960px, 92vw);
+    margin: 0 auto;
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    align-items: start;
+    justify-items: center;
+    padding: 24px 0 8vh;
+}
+
+/* ロゴは落下後に少し遅れてフェードイン */
+.mnav-logo img{
+    height: clamp(28px, 6vw, 52px);
+    display: block;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity .25s ease .20s, transform .25s ease .20s; /* ← 0.2s遅延 */
+}
+.mnav.is-open .mnav-logo img{ opacity: 1; transform: translateY(0); }
+
+/* 閉じるボタン（右上の緑のX） */
+/* 右上固定。ハンバーガーと同じ位置スケールに合わせる */
+.mnav-close{
+    position: fixed;                    /* ← absolute だと中央寄りになる事があるので固定に */
+    top: clamp(10px, 2.4vh, 20px);
+    right: clamp(10px, 2.4vh, 20px);
+    width: 44px;                        /* ← 好みで 40–56px 程度 */
+    height: 44px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    z-index: 2100;                      /* オーバーレイより前面 */
+}
+.mnav-close span{
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 24px;                        /* 棒の長さ（大きすぎ問題の原因になりやすい） */
+    height: 2px;                        /* 棒の太さ */
+    background: var(--brand-green);
+    border-radius: 2px;
+    transform-origin: center;
+}
+.mnav-close span:first-child{ transform: translate(-50%,-50%) rotate(45deg); }
+.mnav-close span:last-child { transform: translate(-50%,-50%) rotate(-45deg); }
+
+/* メニュー本体 */
+.mnav-list{
+    align-self: center;
+    list-style: none; margin: 0; padding: 0;
+    display: grid; gap: clamp(18px, 5vh, 40px);
+    text-align: center;
+}
+/* メニュー項目：基本は非表示 */
+.mnav-list li{
+    opacity: 0;
+    transform: translateY(8px);
+}
+.mnav-list a{
+    text-decoration: none;
+    color: #2e3c39;
+    font-family: "Shippori Mincho","Noto Serif JP",serif;
+    font-size: clamp(18px, 3.4vw, 28px);
+    letter-spacing: .04em;
+    text-shadow: 0 1px 0 rgba(255,255,255,.5);
+}
+.mnav-list a:hover{ text-decoration: underline; text-underline-offset: 4px; }
+
+/* オープン時は背面のページをスクロールさせない */
+body.nav-open{ overflow: hidden; }
+
+/* 表示アニメ */
+@keyframes mnavItemIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+/* is-openで順番に再生（ディレイは好みで調整） */
+.mnav.is-open .mnav-list li{
+    animation: mnavItemIn .45s ease forwards;
+}
+.mnav.is-open .mnav-list li:nth-child(1){ animation-delay: .38s; }
+.mnav.is-open .mnav-list li:nth-child(2){ animation-delay: .46s; }
+.mnav.is-open .mnav-list li:nth-child(3){ animation-delay: .54s; }
+.mnav.is-open .mnav-list li:nth-child(4){ animation-delay: .62s; }
+.mnav.is-open .mnav-list li:nth-child(5){ animation-delay: .70s; } /* 増えるなら続けて */
+
+
+
+/* =========================================================
+Mobile first overrides (～575.98px)
+既存の見た目を壊さない最小限の上書き
+========================================================= */
+@media (max-width: 575.98px){
+
+    /* ===== ヘッダー／ボタン位置（ノッチ考慮） ===== */
+    .global-header{ height: 56px; }
+    .gh-burger{
+        top: calc(10px + var(--safe-top));
+        right: calc(10px + var(--safe-right));
+        width: 54px; height: 54px;
+    }
+    .global-header .gh-burger span{
+        width: 32px;     /* ← 長さを伸ばす（28～36pxで調整可） */
+        height: 2.5px;   /* ← 太さ（2～3pxで調整） */
+    }
+    .mnav-close{
+        top: calc(10px + var(--safe-top));
+        right: calc(10px + var(--safe-right));
+        width: 44px; height: 44px;
+    }
+    .stage{ height: auto !important; }
+    .concept-panel{
+        position: relative !important;                   /* fixed→通常フロー */
+        top: auto !important;
+        bottom: auto !important;
+        height: auto !important;
+        transform: none !important;                      /* translateYを無効化 */
+        opacity: 1 !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+    }
+
+    /* ===== ヒーロー ===== */
+    .hero,
+    .hero.pin{ min-height: 100svh; padding: 20px;  position: relative !important; height: auto !important;}
+    .hero-text{ margin-left: 0; }
+    .hero-logo{ width: clamp(160px, 52vw, 280px); }
+    .hero-sub { font-size: clamp(18px, 4.6vw, 22px); }
+
+    /* ===== コンセプト ===== */
+    .concept-inner{ padding: 6vh 16px; }
+    .concept-eyebrow{ margin-top: 3vh; font-size: clamp(16px, 4.6vw, 18px); }
+    .concept-title{
+        margin-top: 6vh; margin-bottom: 6vh;
+    }
+    .concept-body{
+        margin-top: 4vh; margin-bottom: 4vh;
+    }
+    .concept-visual{ margin-bottom: 5px; }            /* 画像の下に余白 */
+    .concept-visual img{
+        width: 100%;
+        margin-top: 4vh;
+    }
+
+    /* ===== Concept-below（黒背景 3枚→1枚）===== */
+    .concept-below--dark{ padding: 10vh 0 8vh; }
+    .cb-viewport{ margin: 0 -6px; }
+    .cb-slide{ padding: 0 6px; } /* カード間隔を少し詰める */
+    .cb-nav{
+        width: 40px; height: 40px;
+        top: 48%;
+    }
+    .cb-prev{ left: 2px; }
+    .cb-next{ right: 2px; }
+
+    /* 画像カード：角丸と比率はそのまま、キャプションは少し大きめ */
+    .concept-thumb .thumb-media{ border-radius: 10px; }
+    .concept-cap{ font-size: 14px; margin-top: 8px; }
+
+    /* ===== News（縦積み・タップしやすく） ===== */
+    .news-section{ padding: 56px 0; }
+    .news-title{ font-size: 1.4rem; }
+    .news-item a{
+        flex-direction: column; align-items: flex-start;
+        padding: 12px 0;
+        min-height: 44px; /* タップ領域 */
+    }
+    .news-date{ width: auto; margin-bottom: 2px; color: #666; }
+
+    /* ===== フッター（縦並び＆中央寄せ） ===== */
+    .footer-inner{ gap: 24px; }
+    .footer-logo{ margin: 0; text-align: center; }
+    .footer-logo-img{ width: clamp(140px, 42vw, 200px); }
+    .footer-logo .slogan{ font-size: 16px; text-align: center; }
+    .footer-contact{ margin: 0 8px; font-size: 14px; }
+    .footer-contact h3{ margin-bottom: 12px; }
+    .footer-nav{ flex: 1 1 100%; }
+    .footer-nav ul{
+        align-items: center; gap: 12px; margin-right: 0;
+    }
+    .footer-nav a{ font-size: 16px; }
+
+    /* ===== モーダルメニュー（落下＆順次フェードは既存を活かす） ===== */
+    .mnav-inner{ width: 92vw; padding-top: calc(12px + var(--safe-top)); }
+    .mnav-list{ gap: 24px; }
+    .mnav-list a{ font-size: clamp(18px, 5.2vw, 24px); }
+
+    /* ===== 余白の微調整（次セクション） ===== */
+    .after-content{ min-height: 80vh; }
+}
+
+/* iOS Safari 横持ちで 100vh 問題を回避 */
+@supports (height: 100svh){
+.hero, .hero.pin{ min-height: 100svh; }
+}
+
+@media (max-width: 575.98px){
+    .concept-visual img{ width: 100%; height: auto; margin-top: 0; }
+}

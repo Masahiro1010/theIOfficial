@@ -1,0 +1,375 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}The.I - Remade To Be You{% endblock %}
+
+{% block content %}
+<article class="stage" id="stage">
+    <!-- ① ヒーロー（ファーストビュー） -->
+    <section class="hero pin" data-header-theme="light">
+        
+        <div class="hero-text">
+            <img src="{% static 'img/thei_logo.png' %}" alt="The.I" class="hero-logo">
+            <p class="hero-sub">Remade To Be You.</p>
+        </div>
+    </section>
+
+    <!-- ② コンセプト（下から出てくるパネル） -->
+    <section class="concept-panel" id="concept" data-header-theme="light">
+        <div class="concept-inner container">
+            <div class="row align-items-center g-5">
+
+                <div class="col-12 col-lg-5 order-1 order-lg-2 mb-4 mb-lg-0">
+                    <div class="concept-visual">
+                        <img src="{% static 'img/JiaiConcept.jpg' %}" alt="the.i" class="img-fluid">
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-7 order-2 order-lg-1">
+                    <h2 class="concept-eyebrow">Concept</h2>
+                    <h3 class="concept-title">the.i（自愛）<br>自分を愛せるように、</h3>
+
+                    <p class="concept-body">「the.i」のthe「i」はある共通のものを指します。</p>
+                    <p class="concept-empty"></p>
+                    <p class="concept-body">製作者と消費者を個でつなげるかけ合わせのかかわりの中で<br>自愛のごとく自分(identity)を愛するきっかけを作っていきます。</p>
+
+                    <a class="btn btn-outline-dark concept-btn" href="/shop/">ショップページはこちら</a>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- ②’ コンセプト直下：黒背景＋横3枚 -->
+    <section class="concept-below concept-below--dark" id="concept-below" data-header-theme="dark">
+        <div class="container">
+            <div class="cb-slider" id="cb-slider">
+                <button class="cb-nav cb-prev" aria-label="前へ" type="button">‹</button>
+    
+                <div class="cb-viewport">
+                    <ul class="cb-track">
+                        <li class="cb-slide">
+                            <figure class="concept-thumb">
+                                <div class="thumb-media">
+                                    <img src="{% static 'img/JiaiPhoto1.jpg' %}" alt="ワイドパンツ" loading="lazy">
+                                </div>
+                                <figcaption class="concept-cap cap-reveal">ワイドパンツ</figcaption>
+                            </figure>
+                        </li>
+                        <li class="cb-slide">
+                            <figure class="concept-thumb">
+                                <div class="thumb-media">
+                                    <img src="{% static 'img/JiaiPhoto1.jpg' %}" alt="デニムパンツ" loading="lazy">
+                                </div>
+                                <figcaption class="concept-cap cap-reveal">デニムパンツ</figcaption>
+                            </figure>
+                        </li>
+                        <li class="cb-slide">
+                            <figure class="concept-thumb">
+                                <div class="thumb-media">
+                                    <img src="{% static 'img/JiaiPhoto1.jpg' %}" alt="カーゴパンツ" loading="lazy">
+                                </div>
+                                <figcaption class="concept-cap cap-reveal">カーゴパンツ</figcaption>
+                            </figure>
+                        </li>
+    
+                        <!-- 必要に応じて以下を複製して枚数を増やす -->
+                        <li class="cb-slide">
+                            <figure class="concept-thumb">
+                                <div class="thumb-media">
+                                    <img src="{% static 'img/JiaiPhoto1.jpg' %}" alt="テーパード" loading="lazy">
+                                </div>
+                                <figcaption class="concept-cap cap-reveal">テーパード</figcaption>
+                            </figure>
+                        </li>
+                        <li class="cb-slide">
+                            <figure class="concept-thumb">
+                                <div class="thumb-media">
+                                    <img src="{% static 'img/JiaiPhoto1.jpg' %}" alt="ワイドストレート" loading="lazy">
+                                </div>
+                                <figcaption class="concept-cap cap-reveal">ワイドストレート</figcaption>
+                            </figure>
+                        </li>
+                        <li class="cb-slide">
+                            <figure class="concept-thumb">
+                                <div class="thumb-media">
+                                    <img src="{% static 'img/JiaiPhoto1.jpg' %}" alt="ボンテージ" loading="lazy">
+                                </div>
+                                <figcaption class="concept-cap cap-reveal">ボンテージ</figcaption>
+                            </figure>
+                        </li>
+                    </ul>
+                </div>
+    
+                <button class="cb-nav cb-next" aria-label="次へ" type="button">›</button>
+            </div>
+    
+            <div class="more-link">
+                <span>More</span>
+            </div>
+        </div>
+    </section>
+    
+    
+    
+
+    <!-- =======================
+    News セクション
+    ======================= -->
+    <section class="news-section" data-header-theme="light">
+        <div class="container">
+            <h2 class="news-title">News</h2>
+            <ul class="news-list">
+                <li class="news-item news-reveal">
+                    <a href="/news/remake-wide-denim-20250905/">
+                        <time datetime="2025-09-05" class="news-date">2025.09.05</time>
+                        <span class="news-text">新作「Remake Wide Denim」リリース — 初回限定カラーをオンライン先行販売</span>
+                    </a>
+                </li>
+                <li class="news-item news-reveal">
+                    <a href="/news/popup-tenjin-20250902/">
+                        <time datetime="2025-09-02" class="news-date">2025.09.02</time>
+                        <span class="news-text">POP-UP開催決定（福岡・天神 9/20–22）— 先着ノベルティ配布</span>
+                    </a>
+                </li>
+                <li class="news-item news-reveal">
+                    <a href="/news/lookbook-fall25-20250828/">
+                        <time datetime="2025-08-28" class="news-date">2025.08.28</time>
+                        <span class="news-text">Lookbook “Fall ’25” を公開 — スタイリング提案を追加</span>
+                    </a>
+                </li>
+                <li class="news-item news-reveal">
+                    <a href="/news/restock-vintage-cargo-20250818/">
+                        <time datetime="2025-08-18" class="news-date">2025.08.18</time>
+                        <span class="news-text">在庫情報：Vintage Cargo を再入荷しました</span>
+                    </a>
+                </li>
+                <li class="news-item news-reveal">
+                    <a href="/news/site-update-ux-20250810/">
+                        <time datetime="2025-08-10" class="news-date">2025.08.10</time>
+                        <span class="news-text">サイトアップデート — ヒーロー/ショップのUXを改善</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </section>
+    
+    <!-- =======================
+    フッター
+    ======================= -->
+    <footer class="site-footer"  data-header-theme="light">
+        <div class="container footer-inner">
+            <div class="footer-logo">
+                <img src="{% static 'img/Jiai_logoFooter.png' %}" alt="The.I" class="footer-logo-img">
+                <p class="slogan">Remade To Be You</p>
+            </div>
+            <div class="footer-contact">
+                <h3>お問い合わせ</h3>
+                <p>〒810-0005<br>
+                福岡県福岡市中央区清川2丁目<br>
+                21番16号バウスクロス天神南<br>
+                Tell : 080-1920-6264</p>
+            </div>
+            <nav class="footer-nav">
+                <ul>
+                    <li><a href="/">トップページ</a></li>
+                    <li><a href="/#concept">コンセプト</a></li>
+                    <li><a href="/#images">イメージ</a></li>
+                    <li><a href="/news/">ニュース</a></li>
+                </ul>
+            </nav>
+        </div>
+    </footer>
+    
+</article>
+
+<!-- ③ この先に続く通常コンテンツ -->
+<section class="after-content">
+    <!-- ここに他セクション -->
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    // ===== ロゴ：ページ表示時に左からフェードイン =====
+    const logo = document.querySelector('.hero-logo');
+    if (logo) {
+        const fire = () => requestAnimationFrame(() => logo.classList.add('is-in'));
+        if (logo.complete) { fire(); }
+        else { logo.addEventListener('load', fire, { once: true }); }
+    }
+
+    // ===== コンセプト：下からせり上げ =====
+    const stage = document.getElementById('stage');
+    const concept = document.getElementById('concept');
+    if (!stage || !concept) return;
+
+    let ticking = false;
+    const vh = () => window.innerHeight;
+    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+    function update() {
+        const startY = stage.offsetTop;         // ステージ開始位置
+        const y = window.scrollY - startY;      // ステージ内のスクロール量
+        const p = clamp(y / vh(), 0, 1);        // 0→1 でアニメ進行
+
+        concept.style.transform = `translateY(${(1 - p) * 100}%)`;
+        concept.style.opacity = (0.6 + p * 0.4).toFixed(3);
+
+        if (p >= 1) concept.classList.add('is-sticky');
+        else concept.classList.remove('is-sticky');
+
+        ticking = false;
+    }
+
+    function onScroll(){ if (!ticking){ ticking = true; requestAnimationFrame(update); } }
+
+    // 初期化（ヒーローが見える状態から開始）
+    concept.classList.remove('is-sticky');
+    concept.style.transform = 'translateY(100%)';
+    concept.style.opacity = '0.6';
+    update();
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', update);
+
+    // ===== タイトル＆本文：画面中央帯に入ったらフェードイン =====
+    (function setupConceptReveal() {
+        const titleEl = document.querySelector('.concept-title');
+        const bodyEls = Array.from(document.querySelectorAll('.concept-body'));
+
+        // 監視ターゲットを集約（タイトル + 本文）
+        const targets = [];
+        if (titleEl) targets.push(titleEl);
+        targets.push(...bodyEls);
+
+        // 初期状態: 非表示スタイル（共通クラス）を付与
+        targets.forEach((el) => el.classList.add('reveal-up'));
+
+        // 画面中央だけを“当たり判定”にする：上下を45%ずつ削って中央10%をヒットゾーンに
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-in');
+                    obs.unobserve(entry.target); // 1回だけ
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '-45% 0% -45% 0%', // ← 中央バンド
+            threshold: 0.001
+        });
+
+        targets.forEach(el => observer.observe(el));
+    })();
+
+    // ===== Concept-below のキャプション：画面下33%でフェードイン =====
+    (function setupCaptionReveal() {
+        const caps = Array.from(document.querySelectorAll('.concept-cap.cap-reveal'));
+        if (!caps.length) return;
+
+        // 当たり帯：上から67%付近（下から33%）を少し太めに
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-in');
+                    obs.unobserve(entry.target); // 1回だけ
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '-64% 0% -30% 0%', // ← 少し広げた（調整可）
+            threshold: 0.001
+        });
+
+        // 連番で少し遅延させたい場合はこの1行を有効化
+        // caps.forEach((el, i) => el.style.transitionDelay = `${i * 90}ms`);
+
+        caps.forEach(el => observer.observe(el));
+    })();
+
+    // ===== Concept-below スライダー（3枚表示・1枚ずつ移動） =====
+    (function setupCbSlider() {
+        const root   = document.getElementById('cb-slider');
+        if (!root) return;
+
+        const track  = root.querySelector('.cb-track');
+        const slides = Array.from(root.querySelectorAll('.cb-slide'));
+        const prev   = root.querySelector('.cb-prev');
+        const next   = root.querySelector('.cb-next');
+
+        // 表示枚数（ブレークポイントに合わせる）
+        const getSpv = () => {
+            const w = window.innerWidth;
+            if (w <= 575.98) return 1;
+            if (w <= 991.98) return 2;
+            return 3;
+        };
+
+        let index = 0; // 先頭スライドのインデックス（0-based）
+
+        function clampIndex(i) {
+            const spv = getSpv();
+            const max = Math.max(0, slides.length - spv);
+            return Math.max(0, Math.min(i, max));
+        }
+
+        function update() {
+            const spv = getSpv();
+            root.style.setProperty('--spv', spv);
+            index = clampIndex(index);
+
+            // transform は「先頭から index 枚ぶん」左へ
+            const offsetPercent = (100 / spv) * index;
+            track.style.transform = `translateX(-${offsetPercent}%)`;
+
+            // ボタンの活性/非活性
+            const max = Math.max(0, slides.length - spv);
+            prev.disabled = (index === 0);
+            next.disabled = (index === max);
+
+            // 見えているスライドのキャプションは必ずフェードイン済みに
+            slides.forEach((li, i) => {
+                const cap = li.querySelector('.concept-cap.cap-reveal');
+                if (!cap) return;
+                if (i >= index && i < index + spv) cap.classList.add('is-in');
+            });
+        }
+
+        prev.addEventListener('click', () => { index = clampIndex(index - 1); update(); });
+        next.addEventListener('click', () => { index = clampIndex(index + 1); update(); });
+
+        window.addEventListener('resize', update);
+        update(); // 初期レイアウト
+    })();
+
+    // ===== News：画面下から20%付近でフェードイン =====
+    (function setupNewsReveal() {
+        const items = Array.from(document.querySelectorAll('.news-item.news-reveal'));
+        if (!items.length) return;
+
+        // 画面下から20%のライン付近に“薄い当たり帯（約4%）”を作る
+        // rootMargin: top right bottom left（%はビューポート比）
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-in');
+                    obs.unobserve(entry.target); // 1回だけ
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '-76% 0% -20% 0%',  // ← 上76%/下20%を削って、下から20%付近に約4%の帯
+            threshold: 0.001
+        });
+
+        items.forEach(el => observer.observe(el));
+    })();
+
+})();
+</script>
+{% endblock %}
+
+
+
