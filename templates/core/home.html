@@ -6,7 +6,11 @@
 {% block content %}
 <article class="stage" id="stage">
     <!-- ① ヒーロー（ファーストビュー） -->
-    <section class="hero pin" data-header-theme="light">
+    <section class="hero pin" data-header-theme="dark">
+
+        <video class="hero-bg" autoplay muted loop playsinline poster="{% static 'img/hero_fallback.jpg' %}">
+            <source src="{% static 'movie/background.mp4' %}" type="video/mp4">
+        </video>
         
         <div class="hero-text">
             <img src="{% static 'img/thei_logo.png' %}" alt="The.I" class="hero-logo">
