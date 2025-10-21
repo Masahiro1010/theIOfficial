@@ -95,6 +95,9 @@
     color: white;
     text-align: left;
     margin-left: 5vh;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity .6s ease;
 }
 .hero-logo {
     width: 20vw; /* Figmaに合わせてサイズ調整 */
@@ -115,6 +118,20 @@
     height: 100%;
     object-fit: cover;    /* 画面いっぱいにトリミング */
     z-index: 0;
+    opacity: 0;
+    transition: opacity .6s ease;
+}
+
+.hero.video-on .hero-bg {
+    opacity: 1;
+}
+/* ★ 初期状態は .text-on が付くまで .hero-text を確実に隠す */
+.hero:not(.text-on) .hero-text {
+    opacity: 0;
+    pointer-events: none;
+}
+.hero.text-on .hero-text {
+    opacity: 1;
 }
 
 /* 文字を読みやすくする薄い暗幕（必要なら） */
@@ -141,6 +158,28 @@
 .hero-logo.is-in {
     opacity: 1;
     transform: translateX(0);
+}
+
+/* イントロオーバーレイ */
+.intro {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    background: transparent;
+}
+.intro-logo {
+    width: min(56vw, 360px);
+    opacity: 0;
+    transform: translateY(12px) scale(1.06);
+    transition: opacity .6s ease, transform .6s ease;
+    will-change: transform, opacity;
+}
+.intro.is-on .intro-logo {
+    opacity: 1;
+    transform: translateY(0) scale(1.0);
 }
 
 /* 動きが苦手な環境設定の配慮（任意） */

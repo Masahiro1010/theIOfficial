@@ -11,6 +11,11 @@
         <video class="hero-bg" autoplay muted loop playsinline poster="{% static 'img/hero_fallback.jpg' %}">
             <source src="{% static 'movie/background.mp4' %}" type="video/mp4">
         </video>
+
+        <!-- ★ 中央ロゴ（最初に表示 → 3秒後に消える） -->
+        <div class="intro" aria-hidden="true">
+            <img src="{% static 'img/thei_logo.png' %}" alt="" class="intro-logo">
+        </div>
         
         <div class="hero-text">
             <img src="{% static 'img/thei_logo.png' %}" alt="The.I" class="hero-logo">
@@ -372,6 +377,51 @@
     })();
 
 })();
+</script>
+
+<script>
+    (function () {
+        const hero = document.querySelector('.hero');
+        const intro = document.querySelector('.intro');
+        const introLogo = document.querySelector('.intro-logo');
+        const finalLogo = document.querySelector('.hero-logo');
+    
+        if (!hero || !intro || !introLogo || !finalLogo) return;
+    
+        const HOLD_MS = 3000;   // 中央表示時間
+        const FADE_MS = 600;    // フェード時間（CSSと合わせる）
+    
+        // ★ 念のため：開始時に“見せる系”クラスを外し、左下ロゴの早出を防止
+        hero.classList.remove('text-on', 'video-on');
+        finalLogo.classList.remove('is-in');
+    
+        const whenReady = (img) => img.complete
+            ? Promise.resolve()
+            : new Promise((r) => img.addEventListener('load', r, { once: true }));
+    
+        whenReady(introLogo).then(() => {
+            requestAnimationFrame(() => {
+                // 中央ロゴフェードイン
+                intro.classList.add('is-on');
+    
+                // 3秒保持 → フェードアウト → その後に動画&左下ロゴを出す
+                setTimeout(() => {
+                    intro.classList.add('is-out');
+    
+                    setTimeout(() => {
+                        // 背景動画ON
+                        hero.classList.add('video-on');
+                        // 左下テキストON
+                        hero.classList.add('text-on');
+                        // 左下ロゴのスライドイン
+                        finalLogo.classList.add('is-in');
+                        // イントロ除去
+                        intro.remove();
+                    }, FADE_MS);
+                }, HOLD_MS);
+            });
+        });
+    })();
 </script>
 {% endblock %}
 
