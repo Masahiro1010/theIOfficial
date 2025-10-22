@@ -449,6 +449,29 @@
         viewport.addEventListener('pointercancel', onPointerUp, { passive: true });
     })();
 
+    // ===== News：画面下から20%付近でフェードイン =====
+    (function setupNewsReveal() {
+        const items = Array.from(document.querySelectorAll('.news-item.news-reveal'));
+        if (!items.length) return;
+
+        // 画面下から20%のライン付近に“薄い当たり帯（約4%）”を作る
+        // rootMargin: top right bottom left（%はビューポート比）
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-in');
+                    obs.unobserve(entry.target); // 1回だけ
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '-76% 0% -20% 0%',  // ← 上76%/下20%を削って、下から20%付近に約4%の帯
+            threshold: 0.001
+        });
+
+        items.forEach(el => observer.observe(el));
+    })();
+
 })();
 </script>
 
