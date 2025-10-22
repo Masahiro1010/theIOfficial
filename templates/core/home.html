@@ -166,29 +166,38 @@
     <!-- =======================
     フッター
     ======================= -->
-    <footer class="site-footer"  data-header-theme="light">
+    <footer class="site-footer" data-header-theme="light">
         <div class="container footer-inner">
             <div class="footer-logo">
                 <img src="{% static 'img/Jiai_logoFooter.png' %}" alt="The.I" class="footer-logo-img">
                 <p class="slogan">Remade To Be You</p>
             </div>
-            <div class="footer-contact">
-                <h3>お問い合わせ</h3>
-                <p>〒810-0005<br>
-                福岡県福岡市中央区清川2丁目<br>
-                21番16号バウスクロス天神南<br>
-                Tell : 080-1920-6264</p>
+    
+            <!-- ★ ここを包み替え：住所とナビをひとまとめに -->
+            <div class="footer-info">
+                <div class="footer-contact">
+                    <h3>お問い合わせ</h3>
+                    <p>
+                        〒810-0005<br>
+                        福岡県福岡市中央区清川2丁目<br>
+                        21番16号バウスクロス天神南<br>
+                        Tell : 080-1920-6264
+                    </p>
+                </div>
+    
+                <!-- スマホでは住所の“横”に並ぶ -->
+                <nav class="footer-nav footer-nav--compact" aria-label="フッターナビ">
+                    <ul>
+                        <li><a href="/">トップ</a></li>
+                        <li><a href="/#concept">コンセプト</a></li>
+                        <li><a href="/#images">イメージ</a></li>
+                        <li><a href="/news/">ニュース</a></li>
+                    </ul>
+                </nav>
             </div>
-            <nav class="footer-nav">
-                <ul>
-                    <li><a href="/">トップページ</a></li>
-                    <li><a href="/#concept">コンセプト</a></li>
-                    <li><a href="/#images">イメージ</a></li>
-                    <li><a href="/news/">ニュース</a></li>
-                </ul>
-            </nav>
         </div>
     </footer>
+    
     
 </article>
 
