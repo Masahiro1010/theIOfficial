@@ -307,6 +307,7 @@
         const slides = Array.from(root.querySelectorAll('.cb-slide'));
         const prev   = root.querySelector('.cb-prev');
         const next   = root.querySelector('.cb-next');
+        const viewport = root.querySelector('.cb-viewport');
 
         // 表示枚数（ブレークポイントに合わせる）
         const getSpv = () => {
@@ -316,29 +317,38 @@
             return 3;
         };
 
-        let index = 0; // 先頭スライドのインデックス（0-based）
+        let index = 0;                 // 先頭スライドのインデックス
+        let spv = getSpv();            // slides per view
+        let baseOffset = 0;            // 現在の%オフセット（index由来）
+        let dragging = false;
+        let startX = 0, startY = 0;
+        let lastX = 0, lastT = 0;
+        let deltaX = 0;                // ドラッグ中の移動量（px）
+        let isHorizontal = false;      // 縦横判定
+        const PX_TO_PERCENT = () => (100 / (spv * viewport.clientWidth)); // px→%変換
+        const SWIPE_PX_THRESHOLD = 40;     // 最低スワイプ距離（px）
+        const VELOCITY_THRESHOLD = 0.5;    // px/ms（ざっくり）
 
         function clampIndex(i) {
-            const spv = getSpv();
             const max = Math.max(0, slides.length - spv);
             return Math.max(0, Math.min(i, max));
         }
 
-        function update() {
-            const spv = getSpv();
+        function applyTransform(percent) {
+            track.style.transform = `translateX(-${percent}%)`;
+        }
+
+        function recalc() {
+            spv = getSpv();
             root.style.setProperty('--spv', spv);
             index = clampIndex(index);
-
-            // transform は「先頭から index 枚ぶん」左へ
-            const offsetPercent = (100 / spv) * index;
-            track.style.transform = `translateX(-${offsetPercent}%)`;
-
-            // ボタンの活性/非活性
+            baseOffset = (100 / spv) * index;
+            applyTransform(baseOffset);
+            // ナビ活性/非活性
             const max = Math.max(0, slides.length - spv);
             prev.disabled = (index === 0);
             next.disabled = (index === max);
-
-            // 見えているスライドのキャプションは必ずフェードイン済みに
+            // 見えているキャプションは確実にフェードイン
             slides.forEach((li, i) => {
                 const cap = li.querySelector('.concept-cap.cap-reveal');
                 if (!cap) return;
@@ -346,34 +356,97 @@
             });
         }
 
-        prev.addEventListener('click', () => { index = clampIndex(index - 1); update(); });
-        next.addEventListener('click', () => { index = clampIndex(index + 1); update(); });
+        function goTo(i) {
+            index = clampIndex(i);
+            baseOffset = (100 / spv) * index;
+            track.style.transition = 'transform .4s ease';
+            applyTransform(baseOffset);
+            // 余韻後にトランジション解除
+            setTimeout(() => { track.style.transition = ''; }, 450);
+            recalc();
+        }
 
-        window.addEventListener('resize', update);
-        update(); // 初期レイアウト
-    })();
+        // 初期レイアウト
+        recalc();
+        window.addEventListener('resize', recalc, { passive: true });
+        prev.addEventListener('click', () => goTo(index - 1));
+        next.addEventListener('click', () => goTo(index + 1));
 
-    // ===== News：画面下から20%付近でフェードイン =====
-    (function setupNewsReveal() {
-        const items = Array.from(document.querySelectorAll('.news-item.news-reveal'));
-        if (!items.length) return;
+        // ===== フリック操作（Pointer Eventsで統一） =====
+        function onPointerDown(e) {
+            // マウス中ボタン等は無視
+            if (e.pointerType === 'mouse' && e.button !== 0) return;
 
-        // 画面下から20%のライン付近に“薄い当たり帯（約4%）”を作る
-        // rootMargin: top right bottom left（%はビューポート比）
-        const observer = new IntersectionObserver((entries, obs) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-in');
-                    obs.unobserve(entry.target); // 1回だけ
+            dragging = true;
+            isHorizontal = false;
+            startX = e.clientX;
+            startY = e.clientY;
+            lastX = e.clientX;
+            lastT = performance.now();
+            deltaX = 0;
+
+            viewport.classList.add('grabbing');
+            track.style.transition = ''; // ドラッグ中は即時反映
+            viewport.setPointerCapture?.(e.pointerId);
+        }
+
+        function onPointerMove(e) {
+            if (!dragging) return;
+
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+
+            // 最初の判定：横優先ジェスチャか？
+            if (!isHorizontal) {
+                if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
+                    isHorizontal = Math.abs(dx) > Math.abs(dy);
+                } else {
+                    return; // まだ判定保留
                 }
-            });
-        }, {
-            root: null,
-            rootMargin: '-76% 0% -20% 0%',  // ← 上76%/下20%を削って、下から20%付近に約4%の帯
-            threshold: 0.001
-        });
+            }
 
-        items.forEach(el => observer.observe(el));
+            if (isHorizontal) {
+                // 横操作を優先：縦スクロールを抑制
+                e.preventDefault();
+
+                deltaX = dx;
+                const now = performance.now();
+                const dt = now - lastT || 16;
+
+                // 現在の%オフセット＝index由来 + ドラッグ分
+                const dragPercent = deltaX * PX_TO_PERCENT();
+                applyTransform(baseOffset - dragPercent);
+
+                lastX = e.clientX;
+                lastT = now;
+            }
+        }
+
+        function onPointerUp(e) {
+            if (!dragging) return;
+            dragging = false;
+            viewport.classList.remove('grabbing');
+
+            // スワイプ判定
+            const totalDx = e.clientX - startX;
+            const totalDt = Math.max(1, performance.now() - lastT);
+            const velocity = Math.abs(totalDx) / totalDt; // px/ms
+
+            let nextIndex = index;
+            if (Math.abs(totalDx) > SWIPE_PX_THRESHOLD || velocity > VELOCITY_THRESHOLD) {
+                nextIndex = index + (totalDx < 0 ? 1 : -1);
+            }
+
+            // 近いインデックスへスナップ
+            goTo(nextIndex);
+            viewport.releasePointerCapture?.(e.pointerId);
+        }
+
+        // Passive:false で preventDefault を有効にする
+        viewport.addEventListener('pointerdown', onPointerDown, { passive: true });
+        viewport.addEventListener('pointermove', onPointerMove, { passive: false });
+        viewport.addEventListener('pointerup', onPointerUp, { passive: true });
+        viewport.addEventListener('pointercancel', onPointerUp, { passive: true });
     })();
 
 })();

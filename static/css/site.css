@@ -783,7 +783,15 @@ Mobile first overrides (～575.98px)
 
     /* ===== Concept-below（黒背景 3枚→1枚）===== */
     .concept-below--dark{ padding: 10vh 0 8vh; }
-    .cb-viewport{ margin: 0 -6px; }
+    .cb-viewport {
+        touch-action: pan-y;
+        -webkit-user-select: none;
+        user-select: none;
+        margin: 0 -6px;
+    }
+    .cb-viewport.grabbing {
+        cursor: grabbing;
+    }
     .cb-slide{ padding: 0 6px; } /* カード間隔を少し詰める */
     .cb-nav{
         width: 40px; height: 40px;
