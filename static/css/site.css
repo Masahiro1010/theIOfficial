@@ -527,6 +527,13 @@ News セクション
     gap: 40px;
 }
 
+/* 包み替えしたラッパー */
+.footer-info {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+}
+
 .footer-logo {
     flex: 1 1 250px;
     text-align: left;   /* ← 右寄せ */
