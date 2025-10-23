@@ -861,7 +861,11 @@ Mobile first overrides (～575.98px)
     .mnav-list a{ font-size: clamp(18px, 5.2vw, 24px); }
 
     /* ===== 余白の微調整（次セクション） ===== */
-    .after-content{ min-height: 80vh; }
+    .after-content {
+        min-height: 0 !important;   /* ← 80vh を打ち消し */
+        padding-bottom: 0;          /* 念のため */
+        margin-bottom: 0;
+    }
 }
 
 /* iOS Safari 横持ちで 100vh 問題を回避 */
