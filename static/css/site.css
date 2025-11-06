@@ -876,3 +876,9 @@ Mobile first overrides (～575.98px)
 @media (max-width: 575.98px){
     .concept-visual img{ width: 100%; height: auto; margin-top: 0; }
 }
+
+a.is-disabled {
+    pointer-events: none;
+    cursor: default;
+    opacity: 0.6; /* 視覚的に無効っぽく(任意) */
+}
